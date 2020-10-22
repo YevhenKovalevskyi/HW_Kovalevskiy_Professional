@@ -1,6 +1,16 @@
-.idea/
-target/
-dist/
-*.class
+# Package Files #
 *.jar
-*.log
+*.war
+*.ear
+
+# Maven
+log/*
+target/
+
+# Gradle
+.gradle/
+
+# IntelliJ
+.idea
+*.iml
+out/
