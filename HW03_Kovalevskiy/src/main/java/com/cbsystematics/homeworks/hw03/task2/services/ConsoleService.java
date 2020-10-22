@@ -37,7 +37,6 @@ public class ConsoleService {
                 System.out.println("-> OK!");
             } else {
                 System.out.println("-> NOT OK! City is incorrect!");
-                in.nextLine();
             }
         } while (!isCorrectString);
         
@@ -65,7 +64,7 @@ public class ConsoleService {
             }
             
             if (isCorrectString) {
-                System.out.println("");
+                System.out.println();
             } else {
                 System.out.println("-> NOT OK! Answer is incorrect!");
             }
