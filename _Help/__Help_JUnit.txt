@@ -1,0 +1,75 @@
+1. variants of Naming unit tests
+ - MethodName_StateUnderTest_ExpectedBehavior
+ - MethodName_ExpectedBehavior_StateUnderTest
+ - test[Feature being tested]
+ - Feature to be tested
+ - Should_ExpectedBehavior_When_StateUnderTest
+ - When_StateUnderTest_Should_ExpectedBehavior
+ - When_StateUnderTest_Expect_ExpectedBehavior
+ - Given_Preconditions_When_StateUnderTest_Then_ExpectedBehavior
+
+Examples:
+ - whenTestingForEquality_ShouldBeEqual //
+ - isAdult_AgeLessThan18_False // method -> state -> behavior // AssertFalse
+ - isAdult_False_AgeLessThan18 // method -> behavior -> state //  AssertFalse
+ - isNotAnAdultIfAgeLessThan18 // Feature to be tested //  AssertFalse
+ - testIsNotAnAdultIfAgeLessThan18 // test[Feature being tested] //  AssertFalse
+ - should_ReturnFalse_When_AgeLessThan18 // should -> behavior -> when -> state // AssertFalse
+ - when_AgeLessThan18_Expect_isAdultAsFalse // when -> state -> expect -> behavior // AssertFalse
+ - given_TryToDoSomething_when_AgeLessThan18_Expect_isAdultAsFalse // given -> precondition -> when -> state -> expect -> behavior // AssertFalse
+
+2. Annotations
+ - @BeforeClass - run before ALL tests - public static void setUpBeforeClass() { }
+ - @AfterClass - run after ALL tests - public static void tearDownAfterClass() { }
+
+ - @Before - run before EACH tests - public static void setUp() { }
+ - @After - run after EACH tests - public static void tearDown() { }
+
+ - @Test - test method (always as "public void")
+ - @Ignore - ignore test method
+
+3. Test methods execution order
+ - @FixMethodOrder(MethodSorters.DEFAULT) - class annotation(method names hash codes default)
+   - DEFAULT(MethodSorter.DEFAULT) - method names hash codes
+   - JVM((Comparator)null)
+   - NAME_ASCENDING(MethodSorter.NAME_ASCENDING) - method names ascending
+
+4. Suite - grouping test classes
+ - @RunWith(Suite.class)
+   @Suite.SuiteClasses({FirstClassTest.class, SecondClassTest.class})
+   public class SuiteClassTest {
+
+   }
+
+5. Exception annotations
+ - @Test(expected = IOException.class) - неявный перехват исключения
+
+ - try {                               - явный перехват исключения, более надежный
+        --/ action /--
+        fail("Expected exception");
+   } catch (IOException e) {
+        assertNoEquals("", e.getMessage());
+   }
+
+6. AssertJ
+    Throwable throwable = Assertions.catchThrowable(() -> --/ action /--);
+    Assertions.assertThat(throwable).isInstanceOf(IOException.class)
+    Assertions.assertThat(throwable.getMessage()).isNotBlank();
+
+7. TimeOut (ms)
+ - @Test(timeout = 500)
+
+8. Rules - global rules for all methods
+ - @Rule
+   public TemporaryFolder temporaryFolder = new TemporaryFolder();
+ - @Rule
+   public ExpectedException expectedException = ExpectedException.none();
+ - @Rule
+   public TestName testName = new TestName();
+ - @Rule
+   public Timeout globalTimeout = Timeout.seconds(3);
+ - @Rule
+   public ErrorCollector errorCollector = new ErrorCollector();
+ - @Rule
+   public Verifier verifier = new Verifier();
+

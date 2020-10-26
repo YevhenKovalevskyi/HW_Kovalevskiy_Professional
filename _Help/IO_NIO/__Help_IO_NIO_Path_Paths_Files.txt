@@ -1,0 +1,161 @@
+P.S. Не путайте File с Files, Path с Paths, и FileSystem c FileSystems.
+File - старый класс, используемый с версии 1.0, а Files был введен в 1.7.
+Интерфейс Path представляет собой путь к файлу/каталогу и определяет полезный список методов,
+а класс Paths является служебным классом, который предоставляет два метода для получения объекта типа Path.
+Класс FileSystems предоставляет список фабричных методов для получения класса FileSystem,
+в то время как FileSystem предоставляет набор методов, для получения информации о файловой системе.
+
+------------------------------------------------------------------------------------------------------------------------
+
+1. Path - интерфейс. Он используется в новых функциях и API, по всему NIO.2.
+
+Объект пути содержит имена каталогов и файлов, которые составляют полный путь до файла/каталога,
+представленного объектом Path; Path содержит методы для извлечения элементов пути, манипуляций с ними и их добавления.
+
+ - Метод get(file path) - создаёт объект класса Path.
+   Path testFilePath = Paths.get("/home/heorhi/testfile.txt");  // Unux
+   Path testFilePath = Paths.get("D:\\test\\testfile.txt");     // Windows
+
+ - Метод getFileName() - возвращает имя файла объекта Path.
+   testFilePath.getFileName();
+   Для корневого каталога path.getFileName() возвращает null.
+
+ - Метод getRoot() - возвращает корневой элемент объекта Path.
+   testFilePath.getRoot();
+
+ - Метод getParent - возвращает родительскую директорию целевого файла объекта Path.
+   testFilePath.getParent();
+
+ - Метод toUri() - возвращает URI (путь который может быть открыт из браузера).
+   testFilePath.toUri();
+
+ - Метод toAbsolutePath() - возвращает абсолютный путь от данного относительного пути.
+   testFilePath.toAbsolutePath();
+
+ - Метод normalize() - нормализует путь - удаляет ненужные символы (такие как “ . ” и “ .. ”) из объекта Path.
+   testFilePath.normalize();
+
+ - Метод toRealPath() - возвращает абсолютный путь от полученного пути (как toAbsolutePath())
+   и нормализует его (как normalize()). Если файл отсутствует - получим NoSuchFileException
+   testFilePath.toRealPath(LinkOption.NOFOLLOW_LINKS);
+
+ - Метод equals() - сравнивает пути и возвращает Boolean
+   path1.equals(path2);
+
+ - Метод compareTo() - сравнивает пути посимвольно и возвращает: 0, если пути равны;
+   отрицательное целое значение, если путь в объекте вызывающем метод лексикографически меньше пути в объекте,
+   переданном в качестве параметра; положительное целое значение в противоположном случае.
+   path1.compareTo(path2);
+
+   for (Path element : testFilePath) {
+      System.out.println("\t path element: " + element);
+   }
+
+------------------------------------------------------------------------------------------------------------------------
+
+2. Files - класс
+
+Его можно использовать для выполнения различных операций с файлами и каталогами.
+Files является служебным классом, это означает, что это final-класс с private-конструктором и содержит
+только статические методы.
+
+ - Метод isSameFile() - сравнивает файлы, а не пути. В случае отсутствия файла - java.nio.file.NoSuchFileException.
+   Files.isSameFile(path1, path2);
+
+ - Метод isDirectory() - проверяет на дирректорию.
+   Files.isDirectory(path, LinkOption.NOFOLLOW_LINKS);
+
+ - Метод exists() - проверяет существование файлов / каталогов.
+   Files.exists(path, LinkOption.NOFOLLOW_LINKS);
+
+ - Метод isReadable() - проверяет возможность чтения файлов.
+   Files.isReadable(path);
+
+ - Метод isWriteable() - проверяет возможность записи файлов.
+   Files.isWriteable(path);
+
+ - Метод isExecutable() - проверяет возможность выполнения файлов.
+   Files.isExecutable(path);
+
+ - Метод getAttribute() - позволяет получить свойства (атрибуты) файла.
+   Files.getAttribute(path, "creationTime");
+   Files.getAttribute(path, "lastModifiedTime", LinkOption.NOFOLLOW_LINKS);
+   Files.getAttribute(path, "size");
+   Files.getAttribute(path, "isDirectory");
+
+ - Метод copy(Path source, Path target, CopyOption... options) - коппирует файл.
+   Files.copy(pathSource, pathDestination); - даст FileAlreadyExistsException при наличии файла.
+   Files.copy(pathSource, pathDestination, StandardCopyOption.REPLACE_EXISTING); - перезапишет файл при наличии файла.
+   !!! При копировании директории ее содержимое не копируются !!! - это решается через "Обход дерева файлов"
+
+ - Метод move(Path source, Path target, CopyOption. . . options) - перемещает файл.
+   Files.move(pathSource, pathDestination, StandardCopyOption.REPLACE_EXISTING);
+   !!! При перемещении директории ее содержимое перемещаются !!!
+
+ - Метод delete(Path source) - удаляет файл.
+   Files.delete(pathSource);
+   - Если удаляемая дирректория не пуста - полчуим DirectoryNotEmptyException !!!
+   - Если передать символьную ссылку, то будет удалена ссылка, а не целевой файл !!!
+   - Если файл отсутствует - получим NoSuchFileException !!!
+
+ - Метод
+   - walkFileTree(Path start, FileVisitor<!--? super Path--> visitor)
+   - walkFileTree(Path start, Set<filevisitoption> options, int maxDepth, FileVisitor<!--? super Path--> visitor)
+   - Обход дерева файлов
+
+    class MyFileVisitor extends SimpleFileVisitor {
+        @Override
+        public FileVisitResult visitFile(Path path, BasicFileAttributes fileAttributes) {
+            System.out.println("file name:" + path.getFileName());
+            return FileVisitResult.CONTINUE;
+        }
+
+        @Override
+        public FileVisitResult preVisitDirectory(Path path, BasicFileAttributes fileAttributes) {
+            System.out.println("Directory name:" + path);
+            return FileVisitResult.CONTINUE;
+        }
+    }
+
+    try {
+        Files.walkFileTree(pathSource, new MyFileVisitor());
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
+
+------------------------------------------------------------------------------------------------------------------------
+
+3. PathMatcher - интерфейс
+
+Поиск файлов осуществляется через "Обход дерева файлов" и метод getPathMatcher()
+try {
+    matcher = FileSystems.getDefault().getPathMatcher(pattern);
+} catch (IllegalArgumentException iae) {
+    System.err .println("Invalid pattern");
+    System.exit(1);
+}
+
+Метод find(path) вызивается в visitFile() и preVisitDirectory()
+private void find(Path path) {
+    Path name = path.getFileName();
+
+    if (matcher.matches(name)) {
+        System.out.println("Matching file:" + path.getFileName());
+    }
+}
+
+Результат:
+
+Path startPath = Paths.get("Путь к каталогу для поиска (желательно, чтобы он содержал java-файлы)");
+String pattern = "glob:*.java";
+
+try {
+    Files.walkFileTree(startPath, new MyFileFindVisitor(pattern));
+    System.out.println("File search completed!");
+} catch (IOException e) {
+    e.printStackTrace();
+}
+
+------------------------------------------------------------------------------------------------------------------------
+
+4. Отслеживание изменений в каталоге

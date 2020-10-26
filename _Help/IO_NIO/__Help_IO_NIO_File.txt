@@ -1,0 +1,116 @@
+Класс File. Работа с файлами и каталогами
+
+Класс File, определенный в пакете java.io, не работает напрямую с потоками. Его задачей является управление информацией
+о файлах и каталогах. Файлы и каталоги в Java описываются одним классом File.
+
+Класс поддерживает несколько конструкторов:
+ - File(String путь_к_каталогу)
+ - File(String путь_к_каталогу, String имя_файла)
+ - File(File каталог, String имя_файла)
+
+// создаем объект File для каталога
+File dir1 = new File("C://SomeDir");
+
+// создаем объекты для файлов, которые находятся в каталоге
+File file1 = new File("C://SomeDir", "Hello.txt");
+File file2 = new File(dir1, "Hello2.txt");
+
+ - Метод createNewFile(): создает новый файл по пути, который передан в конструктор.
+   В случае удачного создания возвращает true, иначе false
+ - Метод delete(): удаляет каталог или файл по пути, который передан в конструктор.
+   При удачном удалении возвращает true.
+ - Метод exists(): проверяет, существует ли по указанному в конструкторе пути файл или каталог.
+   И если файл или каталог существует, то возвращает true, иначе возвращает false
+ - Метод getAbsolutePath(): возвращает абсолютный путь для пути, переданного в конструктор объекта
+ - Метод getName(): возвращает краткое имя файла или каталога
+ - Метод getParent(): возвращает имя родительского каталога
+ - Метод isDirectory(): возвращает значение true, если по указанному пути располагается каталог
+ - Метод isFile(): возвращает значение true, если по указанному пути находится файл
+ - Метод isHidden(): возвращает значение true, если каталог или файл являются скрытыми
+ - Метод length(): возвращает размер файла в байтах
+ - Метод lastModified(): возвращает время последнего изменения файла или каталога.
+   Значение представляет количество миллисекунд, прошедших с начала эпохи Unix
+ - Метод list(): возвращает массив файлов и подкаталогов, которые находятся в определенном каталоге
+ - Метод listFiles(): возвращает массив файлов и подкаталогов, которые находятся в определенном каталоге
+ - Метод mkdir(): создает новый каталог и при удачном создании возвращает значение true
+ - Метод renameTo(File dest): переименовывает файл или каталог
+
+------------------------------------------------------------------------------------------------------------------------
+
+1. Работа с каталогами
+
+Если объект File представляет каталог, то его метод isDirectory() возвращает true. И поэтому мы можем получить
+его содержимое - вложенные подкаталоги и файлы с помощью методов list() и listFiles().
+
+File dir = new File("C://SomeDir");  // определяем объект для каталога
+
+if (dir.isDirectory()) {  // если объект представляет каталог
+    for (File item : dir.listFiles()) {  // получаем все вложенные объекты в каталоге
+         if (item.isDirectory()) {
+             System.out.println(item.getName() + "  \t folder");
+         } else{
+             System.out.println(item.getName() + "\t file");
+         }
+     }
+}
+
+-----
+
+File dir = new File("C://SomeDir//NewDir");  // определяем объект для каталога
+
+if (dir.mkdir()) {  // создадим каталог
+    System.out.println("Folder has been created");
+}
+
+File newDir = new File("C://SomeDir//NewDirRenamed");
+dir.renameTo(newDir);  // переименуем каталог
+
+if (newDir.delete()) {  // удалим каталог
+    System.out.println("Folder has been deleted");
+}
+
+------------------------------------------------------------------------------------------------------------------------
+
+2. Работа с файлами
+
+Работа с файлами аналогична работе с каталога.
+
+File myFile = new File("C://SomeDir//notes.txt");  // определяем объект для каталога
+
+System.out.println("File name: " + myFile.getName());
+System.out.println("Parent folder: " + myFile.getParent());
+
+if (myFile.exists()) {
+    System.out.println("File exists");
+} else {
+    System.out.println("File not found");
+}
+
+System.out.println("File size: " + myFile.length());
+
+if (myFile.canRead()) {
+    System.out.println("File can be read");
+} else {
+    System.out.println("File can not be read");
+}
+
+if (myFile.canWrite()) {
+    System.out.println("File can be written");
+} else {
+    System.out.println("File can not be written");
+}
+
+File newFile = new File("C://SomeDir//MyFile");  // создадим новый файл
+
+try {
+    if (newFile.createNewFile()) {
+        System.out.println("File has been created");
+    }
+} catch(IOException ex) {
+    System.out.println(ex.getMessage());
+}
+
+При создании нового файла метод createNewFile() в случае неудачи выбрасывает исключение IOException,
+поэтому нам надо его отлавливать, например, в блоке try...catch, как делается в примере выше.
+
+------------------------------------------------------------------------------------------------------------------------
