@@ -1,0 +1,177 @@
+Обобщения Generic - это параметризованные типы.
+
+С их помощью можно объявлять классы, интерфейсы и методы, где тип данных указан в виде параметра.
+Обобщения добавили в язык безопасность типов.
+
+public class Gen<T> {
+    private T ob; // объявление объекта типа T
+
+    public Gen(T o) {
+        ob = o;
+    }
+
+    public T getOb() {
+        return ob;
+    }
+
+    void showType() {
+        System.out.println("Тип T: " + ob.getClass().getName());
+    }
+}
+
+// Создадим объект Gen для Integer
+Gen<Integer> intOb = new Gen<Integer>(77);        // сокращенная запись  Gen<Integer> intOb = new Gen<>(77); -----------
+intOb.showType();                                 // Типом T является java.lang.Integer
+System.out.println("Значение " + intOb.getOb());  // Значение: 77
+
+// Создадим объект Gen для String
+Gen<String> strOb = new Gen<String>("Текст");     // сокращенная запись  Gen<String> strOb = new Gen<>("Текст"); -------
+strOb.showType();                                 // Типом T является java.lang.String
+System.out.println("Значение: " + strOb.getOb()); // Значение: Текст
+
+Параметр T в угловых скобках называется универсальным параметром, так как вместо него можно подставить любой тип. ------
+
+Хотя объекты intOb и strOb имеют тип Gen<T>, они являются ссылками на разные типы и их сравнивать нельзя. --------------
+
+Класс Gen называется обобщённым классом или параметризованным типом. ---------------------------------------------------
+Обобщения работают только с объектами. Поэтому нельзя использовать в качестве параметра элементарные типы. -------------
+Использование обобщений автоматически гарантирует безопасность типов во всех операциях, где они задействованы. ---------
+
+Помните, что нельзя создать экземпляр типа параметра. ------------------------------------------------------------------
+public Gen(T o) {
+    ob = new T(); // Недопустимо
+}
+
+------------------------------------------------------------------------------------------------------------------------
+
+Обобщённый класс с двумя параметрами
+
+public class TwoGen<T, V> {
+    private T ob1;
+    private V ob2;
+
+    public TwoGen(T o1, V o2) {
+        this.ob1 = o1;
+        this.ob2 = o2;
+    }
+
+    public void showTypes() {
+        System.out.println("Тип T: " + this.ob1.getClass().getName());
+        System.out.println("Тип V: " + this.ob2.getClass().getName());
+    }
+
+    public T getOb1() {
+        return this.ob1;
+    }
+
+    public V getOb2() {
+        return this.ob2;
+    }
+}
+
+TwoGen<Integer, String> twoGenObj = new TwoGen<Integer, String>(77, "Текст");
+или сокращенная запись
+TwoGen<Integer, String> twoGenObj = new TwoGen<>(77, "Текст");
+
+twoGenObj.showTypes();
+System.out.println("Значение: " + twoGenObj.getOb1());
+System.out.println("Значение: " + twoGenObj.getOb2());
+
+------------------------------------------------------------------------------------------------------------------------
+
+Обобщённые методы
+
+public static <T> T getSomething(T a) {
+	return a;
+}
+
+object.<T>getSomething(T a); // className.<String>getSomething("Text");
+
+public static <T> T getMiddle(T[] a) {
+    return a[a.length / 2];
+}
+
+object.<T>getMiddle(T[] a);  // className.<Integer>getMiddle(new Integer[] {1, 2, 3, 4, 5, 6, 7, 8});
+
+Переменная типа вводится после модификаторов и перед возвращаемым типом.
+
+Мы можем ограничить диапазон объектов, указав суперкласс. В этом случае можно использовать классы,
+которые могут быть наследниками Animal - Dog, Cat. А String или Integer вы уже не сможете использовать.
+
+public void addItems(ArrayList<? extends Animal> list) {
+
+}
+
+------------------------------------------------------------------------------------------------------------------------
+
+Шаблоны аргументов
+
+Шаблон аргументов указывается символом ? и представляет собой неизвестный тип. По сути, вопрос заменяет Object
+и мы можем использовать любой класс, который в любом случае будет происходить от Object.
+
+boolean sameAvg(Stats<?> ob) ...
+
+------------------------------------------------------------------------------------------------------------------------
+
+Обобщенные интерфейсы
+
+При реализации подобного интерфейса есть две стратегии:
+
+Первая - когда при реализации для универсального параметра интерфейса задается конкретный тип. -------------------------
+Тогда класс, реализующий интерфейс, жестко привязан к этому типу.
+
+Вторая - когда при реализации для универсального параметра интерфейса также используется универсальный параметр. -------
+
+interface Accountable<T> {
+    public T getId();
+    public int getSum();
+    public void setSum(int sum);
+}
+
+class Account implements Accountable<String> {  ||  class Account implements Accountable<T> {
+    private String id;                          ||  private T id;
+    private int sum;
+
+    public Account(String id, int sum) {        ||  public Account(T id, int sum) {
+        this.id = id;
+        this.sum = sum;
+    }
+
+    public String getId() { return id; }        ||  public T getId() { return id; }
+    public int getSum() { return sum; }
+    public void setSum(int sum) { this.sum = sum; }
+}
+
+public class Program {
+
+    public static void main(String[] args) {
+        Accountable<String> acc1 = new Account("1235rwr", 5000);  ||  Account<String> acc1 = new Account<>("1235rwr", 5000);
+        Account acc2 = new Account("2373", 4300);                 ||  Account<String> acc2 = new Account<>("2373", 4300);
+
+        System.out.println(acc1.getId());
+        System.out.println(acc2.getId());
+    }
+}
+
+------------------------------------------------------------------------------------------------------------------------
+
+Обобщенные конструкторы
+
+Конструкторы как и методы также могут быть обобщенными.
+В этом случае перед конструктором также указываются в угловых скобках универсальные параметры:
+
+class Account {
+
+    private String id;
+    private int sum;
+
+    <T>Account(T id, int sum){
+        this.id = id.toString();
+        this.sum = sum;
+    }
+
+    ...........
+}
+
+В данном случае конструктор принимает параметр id, который представляет тип T.
+В конструкторе его значение превращается в строку и сохраняется в локальную переменную.

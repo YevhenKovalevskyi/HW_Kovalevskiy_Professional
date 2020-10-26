@@ -1,0 +1,44 @@
+TreeSet - класс, реализует интерфейс NavigableSet и наследуется от класса AbstractSet
+
+Интерфейс NavigableSet реализует интерфейс SortedSet, а тот в свою очередь Set.
+
+Класс TreeSet создаёт коллекцию, которая для хранения элементов использует дерево.
+Объекты хранятся в отсортированном порядке по возрастанию.
+
+------------------------------------------------------------------------------------------------------------------------
+
+Конструкторы TreeSet :
+
+  // Создание пустого TreeSet, с сортировкой согласно естественному упорядочиванию его элементов
+  TreeSet()
+
+  // Создание TreeSet, содержащего элементы в указанном наборе, с сортировкой согласно естественному
+  // упорядочиванию его элементов.
+  TreeSet(Collection<? extends E> c)
+
+  // Создание пустого TreeSet, с сортировкой согласно comparator
+  TreeSet(Comparator<? super E> comparator)
+
+  // Создание TreeSet, содержащего те же самые элементы и использующего то же самое упорядочивание
+  // в качестве указанного сортированного набора
+  TreeSet(SortedSet<E> s)
+
+------------------------------------------------------------------------------------------------------------------------
+
+ - Метод ceiling(Object o)
+ - Метод descendingIterator()
+ - Метод descendingSet()
+ - Метод first()
+ - Метод floor(Object o)
+ - Метод headSet(E e)
+ - Метод headSet(E e, boolean inclusive)
+ - Метод higher(Object o)
+ - Метод last()
+ - Метод lower(E e)
+ - Метод pollFirst()
+ - Метод pollLast()
+ - Метод spliterator()
+ - Метод subSet(E fromElement, boolean fromInclusive, E toElement, boolean toInclusive)
+ - Метод subSet(E fromElement, E toElement)
+ - Метод tailSet(E fromElement)
+ - Метод tailSet(E fromElement, boolean inclusive)
