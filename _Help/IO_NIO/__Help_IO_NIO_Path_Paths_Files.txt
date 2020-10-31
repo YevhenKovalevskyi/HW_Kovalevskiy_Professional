@@ -59,6 +59,13 @@ File - старый класс, используемый с версии 1.0, а
 Files является служебным классом, это означает, что это final-класс с private-конструктором и содержит
 только статические методы.
 
+  - Метод createFile() - создает новый файл
+    Path path = Paths.get(filePath);
+
+    if (!Files.exists(path, LinkOption.NOFOLLOW_LINKS)) {
+        Files.createFile(path);
+    }
+
  - Метод isSameFile() - сравнивает файлы, а не пути. В случае отсутствия файла - java.nio.file.NoSuchFileException.
    Files.isSameFile(path1, path2);
 
