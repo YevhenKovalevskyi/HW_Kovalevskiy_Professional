@@ -19,7 +19,7 @@ public final class FilesHelper {
      * @param fileName name of the file
      * @return path to file
      */
-    public static String getSourcePackageFilePath(Class currClass, String resourceName, String fileName) throws UnsupportedEncodingException {
+    public static String getSourcePackageFilePath(Class<?> currClass, String resourceName, String fileName) throws UnsupportedEncodingException {
         return URLDecoder.decode(currClass.getResource(resourceName).getFile(), "UTF-8")
                 .replace(System.getProperty("user.dir").replace("\\", "/"), "")
                 .replace(resourceName, "")
@@ -36,7 +36,7 @@ public final class FilesHelper {
      * @param fileName name of the file
      * @return path to resource file
      */
-    public static String getResourcePackageFilePath(Class currClass, String resourceName, String fileName) throws UnsupportedEncodingException {
+    public static String getResourcePackageFilePath(Class<?> currClass, String resourceName, String fileName) throws UnsupportedEncodingException {
         return URLDecoder.decode(currClass.getResource(resourceName).getFile(), "UTF-8")
                 .replace(System.getProperty("user.dir").replace("\\", "/"), "")
                 .replace(resourceName, "")
@@ -53,7 +53,7 @@ public final class FilesHelper {
      * @param fileName name of the file
      * @return path to resource file
      */
-    public static String getResourceRootFilePath(Class currClass, String resourceName, String fileName) throws UnsupportedEncodingException {
+    public static String getResourceRootFilePath(Class<?> currClass, String resourceName, String fileName) throws UnsupportedEncodingException {
         return URLDecoder.decode(currClass.getResource(resourceName).getFile(), "UTF-8")
                 .replace(System.getProperty("user.dir").replace("\\", "/"), "")
                 .replace(resourceName, "")

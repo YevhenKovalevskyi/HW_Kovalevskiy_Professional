@@ -59,7 +59,7 @@ StringBuffer strBuffer = new StringBuffer(str);
  - Метод append(): добавляет подстроку в конец StringBuffer.
    strBuffer.append(" world");
 
- - Метод insert(): добавляет подстроку в конец StringBuffer.
+ - Метод insert(): добавляет подстроку перед указанным индексом StringBuffer.
    strBuffer.insert(0, "s");
 
  - Метод delete(): удаляет все символы с определенного индекса до определенной позиции.

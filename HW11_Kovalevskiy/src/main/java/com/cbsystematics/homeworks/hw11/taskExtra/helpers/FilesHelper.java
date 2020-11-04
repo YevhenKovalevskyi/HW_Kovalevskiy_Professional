@@ -1,6 +1,4 @@
-package com.cbsystematics.homeworks.hw12.task2.helpers;
-
-import com.cbsystematics.homeworks.hw12.task2.Main;
+package com.cbsystematics.homeworks.hw11.taskExtra.helpers;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
