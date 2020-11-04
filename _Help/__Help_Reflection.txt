@@ -1,0 +1,149 @@
+Рефлексия — это механизм исследования данных о программе во время её выполнения.
+
+Рефлексия позволяет вам получить информацию о внутреннем строении класса — поля, методы и т.д., и позволяет обратиться
+к полям, методам и другим артифактам через эту информацию.
+ЭТО ВСЕ МОЖНО ДЕЛАТЬ УЖЕ ПРИ ИСПОЛНЕНИИ ПРОГРАММЫ — в рантайме.
+
+Если брать технические возможности рефлексии, то в первую очередь можно выделить две группы действий:
+ - Можно узнать всю информацию о классе — методы, поля, конструкторы, константы, суперклассы, реализуемые интерфейсы.
+ - Можно работать с классом (объектом), а именно — создать объект класса, выполнить методы, получить или установить значения полей.
+
+Если расширить список, то вот что позволяет выполнить рефлексия:
+ - Узнать/определить класс объекта.
+ - Получить информацию о модификаторах класса, полях, методах, константах, конструкторах и суперклассах.
+ - Выяснить, какие методы принадлежат реализуемому интерфейсу/интерфейсам.
+ - Создать экземпляр класса, причем имя класса неизвестно до момента выполнения программы.
+ - Получить и установить значение поля объекта по имени.
+ - Вызвать метод объекта по имени.
+
+Минусы:
+ - Худшая производительность в сравнении с классической работой с классами, методами и переменными.
+ - Ограничения безопасности. Если мы захотим использовать рефлексию на классе, который защищен с помощью
+   специального класса SecurityManager, то ничего у не выйдет т.к. этот класс будет выбрасывать исключения каждый раз,
+   как мы попытаемся получить доступ к закрытым членам класса.
+ - Получение доступа к внутренностям класса, что нарушает принцип инкапсуляции.
+
+------------------------------------------------------------------------------------------------------------------------
+
+В java есть замечательный класс Class. Он представляет классы и интерфейсы в исполняемом приложении Java.
+
+    Animal animal = new Animal();
+
+1. Чтобы получить поля класса есть методы:
+
+   animal.getClass().getFields(); - доступные поля
+   animal.getClass().getField(String name); - доступное поле по имени
+   animal.getClass().getDeclaredFields(); - все поля
+   animal.getClass().getDeclaredField(String name); - любое поле по имени
+
+   !!! getFields() и getDeclaredFields() не возвращают поля класса-родителя !!! ----------------------------------------
+
+   Попробуем добраться до private поля - получить/установить
+
+   try {
+       Field field = myClass.getClass().getDeclaredField("name");
+       field.setAccessible(true); ------------------------------------------------------------------------------- доступ
+       name = (String) field.get(myClass); -------------------------------------------------------------------- получить
+       field.set(myClass, (String) "new value"); ------------------------------------------------------------ установить
+   } catch (NoSuchFieldException | IllegalAccessException e) {
+       e.printStackTrace();
+   }
+
+2. Чтобы получить методы класса есть методы:
+
+   animal.getClass().getMethods(); - доступные методы
+   animal.getClass().getMethod(String name); - доступный метод по имени
+   animal.getClass().getDeclaredMethods(); - все методы
+   animal.getClass().getDeclaredMethod(String name); - любой метод по имени
+   animal.getClass().getEnclosingMethod() - если класс является локальным или анонимным, метод возвращает тот метод
+   в котором этот класс был создан, иначе метод возвращает null.
+
+   try {
+      Method method = myClass.getClass().getDeclaredMethod("getFood");
+      method.setAccessible(true); ------------------------------------------------------------------------------- доступ
+      method.invoke(myClass); ----------------------------------------------------------------------------------- запуск
+   } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+      e.printStackTrace();
+   }
+
+3. Запуск метода:
+   method.invoke(Оbject, Args) - вызов метода, где Оbject — экземпляр класса MyClass. Args — аргументы метода
+
+4. Создать экземпляр класа:
+   // Без использования Reflection
+   Foo foo = new Foo();
+
+   // С использованием Reflection
+   Class foo = Class.forName("Foo");
+
+   // Загрузка JDBC-драйвера
+   Class.forName("com.mysql.jdbc.Driver");
+
+   Class.forName(Animal.class.getName()) - получает полный путь к классу
+   Class.forName("com.cbsystematics.homeworks.hw07.taskExtra.Animal") - то же самое
+   com.cbsystematics.homeworks.hw07.taskExtra.Animal
+
+   !!!ДЛЯ КОНСТРУКТОРА ПО УМОЛЧАНИЮ (без параметров) !!!
+
+   try {
+       Class<?> classFullName = Class.forName(Animal.class.getName()); -------------------------------- получаем полное имя
+       Animal cat = (Animal) classFullName.newInstance(); -------------------------------------------- создаем экземпляр
+
+       System.out.println(cat);
+   } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
+       e.printStackTrace();
+   }
+
+   !!!ДЛЯ КОНСТРУКТОРА ЛЮБОГО (с параметрами) !!!
+
+   try {
+       Class<?> classFullName = Class.forName(Animal.class.getName()); -------------------------------- получаем полное имя
+       Class<?>[] params = {String.class, String.class, String.class}; --------------------------- задаем шаблон параметров
+       Animal dog = (Animal) classFullName.getConstructor(params).newInstance("Dog", "North", "animals"); -- создаем экземпляр с параметрами
+
+       System.out.println(dog);
+   } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
+       e.printStackTrace();
+   }
+
+
+   На момент старта java приложения далеко не все классы оказываются загруженными в JVM.
+   Если в вашем коде нет обращения к классу MyClass, то тот, кто отвечает за загрузку классов в JVM, а им является
+   ClassLoader, никогда его туда и не загрузит.
+   Поэтому нужно заставить ClassLoader загрузить его и получить описание нашего класса в виде переменной типа Class.
+   Для этой задачи существует метод forName(String), где String — имя класса, описание которого нам требуется.
+
+   Получив Сlass, вызов метода newInstance() вернет Object, который будет создан по тому самому описанию.
+   Остается привести этот объект к нашему классу MyClass.
+
+5. Получить конструкторы:
+   - getConstructor(Class<?>... parameterTypes) - получить конкретный открытый конструктор
+   - getConstructors() - получить все открытые конструкторы
+   - getDeclaredConstructor(Class<?>... parameterTypes) - получить конкретный любой конструктор
+   - getDeclaredConstructors() - получить все любые конструкторы
+
+   Constructor<?>[] constructors = classFullName.getConstructors();
+
+   for (Constructor<?> constructor : constructors) {
+       Class<?>[] paramTypes = constructor.getParameterTypes();
+
+       for (Class<?> paramType : paramTypes) {
+           System.out.print(paramType.getName() + " ");
+       }
+
+       System.out.println();
+   }
+
+------------------------------------------------------------------------------------------------------------------------
+
+И еще вагон и маенькая тележка методов для работы с полями, методами, конструкторами, константами, суперклассами и т.д.
+
+ - Исследование модификаторов класса
+   obj.getClass().getModifiers();
+
+ - Нахождение суперклассов
+   obj.getClass().getSuperclass();
+
+ - Определение интерфейсов, реализуемых классом
+   obj.getClass().getInterfaces();
+
