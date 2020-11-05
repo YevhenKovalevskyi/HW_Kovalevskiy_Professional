@@ -79,14 +79,13 @@
    // Загрузка JDBC-драйвера
    Class.forName("com.mysql.jdbc.Driver");
 
-   Class.forName(Animal.class.getName()) - получает полный путь к классу
+   Class.forName(Animal.class.getName()) - получает полный путь к классу - com.cbsystematics.homeworks.hw07.taskExtra.Animal
    Class.forName("com.cbsystematics.homeworks.hw07.taskExtra.Animal") - то же самое
-   com.cbsystematics.homeworks.hw07.taskExtra.Animal
 
    !!!ДЛЯ КОНСТРУКТОРА ПО УМОЛЧАНИЮ (без параметров) !!!
 
    try {
-       Class<?> classFullName = Class.forName(Animal.class.getName()); -------------------------------- получаем полное имя
+       Class<?> classFullName = Class.forName(Animal.class.getName()); ----------------------------- получаем полное имя
        Animal cat = (Animal) classFullName.newInstance(); -------------------------------------------- создаем экземпляр
 
        System.out.println(cat);
@@ -97,8 +96,8 @@
    !!!ДЛЯ КОНСТРУКТОРА ЛЮБОГО (с параметрами) !!!
 
    try {
-       Class<?> classFullName = Class.forName(Animal.class.getName()); -------------------------------- получаем полное имя
-       Class<?>[] params = {String.class, String.class, String.class}; --------------------------- задаем шаблон параметров
+       Class<?> classFullName = Class.forName(Animal.class.getName()); ----------------------------- получаем полное имя
+       Class<?>[] params = {String.class, String.class, String.class}; ------------------------ задаем шаблон параметров
        Animal dog = (Animal) classFullName.getConstructor(params).newInstance("Dog", "North", "animals"); -- создаем экземпляр с параметрами
 
        System.out.println(dog);
