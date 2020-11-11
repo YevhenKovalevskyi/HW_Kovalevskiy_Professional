@@ -1,3 +1,5 @@
+https://projectlombok.org/features/all
+
 Аннотации в Java - это специальная форма синтетических метаданных, которая может быть добавлена в исходный код.
 Аннотации используются для анализа кода, компиляции или выполнения.
 Аннотированы могут быть пакеты, классы, методы, переменные и параметры.
@@ -92,18 +94,33 @@
 
     @Target(value=ElementType.FIELD)
     @Retention(value=RetentionPolicy.RUNTIME)
-
     public @interface Name {
         String name();
         String type() default "string";
     }
 
+------------------------------------------------------------------------------------------------------------------------
 
+Repeatable
 
+@Repeatable(Math.Maths.class)
+@Target(ElementType.METHOD)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface Math {
+    int num1() default 0;
+    int num2() default 0;
 
+    @Target(ElementType.METHOD)
+    @Retention(RetentionPolicy.RUNTIME)
+    @interface Maths {
+        Math[] value();
+    }
+}
 
+----------
 
-
-
-
-
+@Math(num1=10, num2=20)
+@Math(num1=20, num2=30)
+public void mathSum(int num1, int num2) {
+    System.out.println(num1 + num2);
+}
